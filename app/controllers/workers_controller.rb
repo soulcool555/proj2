@@ -9,6 +9,14 @@ class WorkersController < ApplicationController
     end
     # new lines ends
   end
+  def create
+    require "digest/md5"
+    pass = Digest::MD5.hexdigest(params[:password])
+    Worker.create(:name => params[:name],
+      :username => params[:username],
+      :password => pass,
+      :department => params[:department])
+  end
   def login
     if params[:username] == nil
       username = password = ""
