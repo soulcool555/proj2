@@ -17,24 +17,40 @@ class WorkersController < ApplicationController
       :password => pass,
       :department => params[:department])
   end
+  def modify 
+    worker = Worker.find_by_id(params[:id])
+    require "digest/md5"
+    pass = Digest::MD5.hexdigest(params[:password])
+    worker.update_attributes(:name => params[:name],
+      :username => params[:username],
+      :password => pass,
+      :department => params[:department])
+  end  
+  def destroy
+    id = params[:id]
+    Worker.destroy(id)   
+  end 
   def login
     if params[:username] == nil
       username = password = ""
     else
       username = params[:username]
       password = params[:password]
-    end
+ 
     conn = ActiveRecord::Base.connection
     idString = conn.select_value("select get_id('" +
       username + "','" + password + "')")
     id = idString.to_i
     cookies.signed[:id] = id
-    if id == 1
       redirect_to :controller => "workers", 
-        :action => "admin"
-    elsif id > 1
-      redirect_to :controller => "workshops", :action => "index"
-    end 
+        :action => "idlogin"
+    end  
+  end
+  def idlogin
+    id = cookies.signed[:id]
+    respond_to do |format|
+       format.html { render :text => id }
+    end
   end
   def logout
     cookies.signed[:id] = nil;

@@ -21,8 +21,8 @@ create table workshops(
   primary key (id)
 );
 create table worker_workshop(
-  worker_id integer references workers(id),
-  workshop_id integer references workshops(id)
+  worker_id integer references workers(id) on delete cascade,
+  workshop_id integer references workshops(id) on delete cascade
 );
 
 create or replace view worker_workshops_view as
